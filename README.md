@@ -1,2 +1,4 @@
-# Light pollution analysis
- A change detection approach in Lombardy region
+# Light pollution analysis: a change detection approach in the Lombardy region
+
+Light pollution is one of the emerging pollutants in the field of environmental damage. It is the direct consequence of urban development, the growth of cities, and population growth. NASA's Black Marble nighttime lights product suite (VNP46) is suitable for studying this phenomenon and its trend over time. It has been available at 500 m resolution since January 2012. Data are retained from the Visible Infrared Imaging Radiometer Suite (VIIRS), on board the Suomi-National Polar-orbiting Partnership (S-NPP) and Joint Polar Satellite System (JPSS) satellite platforms. In particular, the Day/Night Band (DNB) sensors provide global daily measurements of nocturnal visible and near-infrared (NIR) light that is suitable for earth system science and applications studies.
+This study aims to analyze changes in light pollution in the Lombardy region of Northern Italy from April 2019 to April 2024. Data processing was conducted using the BlackMarbleR package, which provides a simple way to use nighttime light data from NASA’s Black Marble. Change detection was performed with QGIS <tt>OTB MultivariateAlterationDetector</tt>.
