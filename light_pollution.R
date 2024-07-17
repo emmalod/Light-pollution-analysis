@@ -1,4 +1,4 @@
-#### Setup
+#### Light Pollution Analysis
 # Load packages
 library(blackmarbler)
 library(geodata)
@@ -8,17 +8,16 @@ library(ggplot2)
 library(tidyterra)
 library(lubridate)
 
-
 #### Define NASA bearer token
 token <- "eyJ0eXAiOiJKV1QiLCJvcmlnaW4iOiJFYXJ0aGRhdGEgTG9naW4iLCJzaWciOiJlZGxqd3RwdWJrZXlfb3BzIiwiYWxnIjoiUlMyNTYifQ.eyJ0eXBlIjoiVXNlciIsInVpZCI6ImVtbWFsb2QiLCJleHAiOjE3MjUyODM3OTgsImlhdCI6MTcyMDA5OTc5OCwiaXNzIjoiRWFydGhkYXRhIExvZ2luIn0.K9pdOmDzXT1hK45KjlbDlgLrGqBBONzrFZ7wvq56ndmvP05UBhUyfRTLMBbymNAvYxPtfd0VjTdgvu8NT4HyYAz4DPnJ24uayuZykJIUu0uBzHaZbwNyspoU8OKi6a_4HigTzkU2gU-CzPuWQ5au9iiOZnkUtOOjn1D2KiU242a8lnLvvQihfCF5edTj7L2SGfFqEXnE2ncwvlGeBKqmFZNCiw9lztPkXLIlnUjOkz4TBRtkdAHVSkM323s0LKhgYG2eBQCRyCc1l8E0eawYX-vYHm9qOe2GeqKOu8WY9swwCOCbf9RuQzCn9dUVzr0KPmrEMxAobejQk0gkVnEDQg"
 bearer <- token
 
 
 ####  ITALY
+
 ### ROI
 # Define region of interest (roi). The roi must be (1) an sf polygon and (2)
-# in the WGS84 (epsg:4326) coordinate reference system. Here, we use the
-# getData function to load a polygon of Ghana
+# in the WGS84 (epsg:4326) coordinate reference system.
 roi_sf <- gadm(country = "ITA", level=1, path = tempdir()) 
 
 ### Daily data
@@ -91,55 +90,55 @@ ntl_df |>
 
 
 ####  LOMBARDY
+
 ### ROI
 # Define region of interest (roi). The roi must be (1) an sf polygon and (2)
-# in the WGS84 (epsg:4326) coordinate reference system. Here, we use the
-# getData function to load a polygon of Ghana
+# in the WGS84 (epsg:4326) coordinate reference system.
 roi_sf <- gadm(country = "ITA", level=2, path = tempdir()) 
 
 r<-roi_sf$GID_1=="ITA.10_1"
-prova = roi_sf[r]
+lombardy = roi_sf[r]
 
 ### Monthly data
-r_201904 <- bm_raster(roi_sf = prova,
+r_201904 <- bm_raster(roi_sf = lombardy,
                         product_id = "VNP46A3",
                         date = "2019-04-01",
                         bearer = bearer)
 
-r_202004 <- bm_raster(roi_sf = prova,
+r_202004 <- bm_raster(roi_sf = lombardy,
                       product_id = "VNP46A3",
                       date = "2020-04-01",
                       bearer = bearer)
 
-r_202104 <- bm_raster(roi_sf = prova,
+r_202104 <- bm_raster(roi_sf = lombardy,
                       product_id = "VNP46A3",
                       date = "2021-04-01",
                       bearer = bearer)
 
-r_202204 <- bm_raster(roi_sf = prova,
+r_202204 <- bm_raster(roi_sf = lombardy,
                       product_id = "VNP46A3",
                       date = "2022-04-01",
                       bearer = bearer)
 
-r_202304 <- bm_raster(roi_sf = prova,
+r_202304 <- bm_raster(roi_sf = lombardy,
                       product_id = "VNP46A3",
                       date = "2023-04-01",
                       bearer = bearer)
 
-r_202404 <- bm_raster(roi_sf = prova,
+r_202404 <- bm_raster(roi_sf = lombardy,
                       product_id = "VNP46A3",
                       date = "2024-04-01",
                       bearer = bearer)
 
 #### Prep data - Italy cropping
-r_201904_prep <- r_201904 |> terra::mask(prova)
-r_202004_prep <- r_202004 |> terra::mask(prova)
-r_202104_prep <- r_202104 |> terra::mask(prova)
-r_202204_prep <- r_202204 |> terra::mask(prova)
-r_202304_prep <- r_202304 |> terra::mask(prova)
-r_202404_prep <- r_202404 |> terra::mask(prova)
+r_201904_prep <- r_201904 |> terra::mask(lombardy)
+r_202004_prep <- r_202004 |> terra::mask(lombardy)
+r_202104_prep <- r_202104 |> terra::mask(lombardy)
+r_202204_prep <- r_202204 |> terra::mask(lombardy)
+r_202304_prep <- r_202304 |> terra::mask(lombardy)
+r_202404_prep <- r_202404 |> terra::mask(lombardy)
 
-## Distribution is skewed, so log - img enhancement
+## Distribution is skewed, so apply log - img enhancement
 r_201904_prep[] <- log(r_201904_prep[] + 1)
 r_202004_prep[] <- log(r_202004_prep[] + 1)
 r_202104_prep[] <- log(r_202104_prep[] + 1)
@@ -147,7 +146,8 @@ r_202204_prep[] <- log(r_202204_prep[] + 1)
 r_202304_prep[] <- log(r_202304_prep[] + 1)
 r_202404_prep[] <- log(r_202404_prep[] + 1)
 
-##### Map
+#### Plot Maps
+# 04-2019
 ggplot() +
   geom_spatraster(data = r_201904_prep) +
   scale_fill_gradient2(low = "black",
@@ -161,6 +161,7 @@ ggplot() +
   theme(plot.title = element_text(face = "bold", hjust = 0.5),
         legend.position = "right")
 
+# 04-2020
 ggplot() +
   geom_spatraster(data = r_202004_prep) +
   scale_fill_gradient2(low = "black",
@@ -174,6 +175,7 @@ ggplot() +
   theme(plot.title = element_text(face = "bold", hjust = 0.5),
         legend.position = "none")
 
+# 04-2021
 ggplot() +
   geom_spatraster(data = r_202104_prep) +
   scale_fill_gradient2(low = "black",
@@ -185,8 +187,9 @@ ggplot() +
   coord_sf() +
   theme_void() +
   theme(plot.title = element_text(face = "bold", hjust = 0.5),
-        legend.position = "none")
+      legend.position = "none")
 
+# 04-2022
 ggplot() +
   geom_spatraster(data = r_202204_prep) +
   scale_fill_gradient2(low = "black",
@@ -200,6 +203,7 @@ ggplot() +
   theme(plot.title = element_text(face = "bold", hjust = 0.5),
         legend.position = "none")
 
+# 04-2023
 ggplot() +
   geom_spatraster(data = r_202304_prep) +
   scale_fill_gradient2(low = "black",
@@ -213,6 +217,7 @@ ggplot() +
   theme(plot.title = element_text(face = "bold", hjust = 0.5),
         legend.position = "none")
 
+# 04-2024
 ggplot() +
   geom_spatraster(data = r_202404_prep) +
   scale_fill_gradient2(low = "black",
@@ -228,7 +233,7 @@ ggplot() +
 
 
 #### Extract annual data
-ntl_df <- bm_extract(roi_sf = prova,
+ntl_df <- bm_extract(roi_sf = lombardy,
                      product_id = "VNP46A4",
                      date = 2019:2024,
                      bearer = bearer)
@@ -249,37 +254,38 @@ ntl_df |>
   theme(strip.text = element_text(face = "bold")
   )
 
-### Monthly data
-ntl_df_201904 <- bm_extract(roi_sf = prova,
+### Monthly data - as pictured in paper
+ntl_df_201904 <- bm_extract(roi_sf = lombardy,
                       product_id = "VNP46A3",
                       date = "2019-04-01",
                       bearer = bearer)
 
-ntl_df_202004 <- bm_extract(roi_sf = prova,
+ntl_df_202004 <- bm_extract(roi_sf = lombardy,
                       product_id = "VNP46A3",
                       date = "2020-04-01",
                       bearer = bearer)
 
-ntl_df_202104 <- bm_extract(roi_sf = prova,
+ntl_df_202104 <- bm_extract(roi_sf = lombardy,
                       product_id = "VNP46A3",
                       date = "2021-04-01",
                       bearer = bearer)
 
-ntl_df_202204 <- bm_extract(roi_sf = prova,
+ntl_df_202204 <- bm_extract(roi_sf = lombardy,
                       product_id = "VNP46A3",
                       date = "2022-04-01",
                       bearer = bearer)
 
-ntl_df_202304 <- bm_extract(roi_sf = prova,
+ntl_df_202304 <- bm_extract(roi_sf = lombardy,
                       product_id = "VNP46A3",
                       date = "2023-04-01",
                       bearer = bearer)
 
-ntl_df_202404 <- bm_extract(roi_sf = prova,
+ntl_df_202404 <- bm_extract(roi_sf = lombardy,
                       product_id = "VNP46A3",
                       date = "2024-04-01",
                       bearer = bearer)
 
+## Merge dataframes and convert date in the correct format
 merged_df <- rbind(ntl_df_201904,ntl_df_202004,ntl_df_202104,ntl_df_202204,ntl_df_202304,ntl_df_202404)
 merged_df$date<-as.Date(merged_df$date)
 merged_df$year<-format(merged_df$date,"%Y")
